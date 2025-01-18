@@ -13,6 +13,14 @@ import pandas as pd
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import JsonResponse
+import praw
+
+# Initialize Reddit API client with credentials
+reddit = praw.Reddit(
+    client_id='jjMeVDNHzUYekpwYWYI2RQ',  # Replace with your Reddit API client_id
+    client_secret='2RnoBlJ9acE0eT4cW-o6bfpRDC-07w',  # Replace with your Reddit API client_secret
+    user_agent='art_finder_v1 by /u/ShravaniDev'  # Replace with your Reddit API user_agent
+)
 
 
 # Function to search DuckDuckGo for the company website and extract the URL using Selenium
@@ -227,3 +235,59 @@ def get_company_and_play_store_details(request):
         "reviews": reviews,
         "overall_rating": overall_rating
     })
+
+@api_view(['GET'])
+def get_reddit_posts(request):
+    subreddit_name = request.GET.get('subreddit', 'Sneakers')  # Default to 'Sneakers' if no subreddit is provided
+    query = request.GET.get('query', 'Nike Adidas shoes')  # Default search query if not provided
+    
+    try:
+        # Choose the relevant subreddit
+        subreddit = reddit.subreddit(subreddit_name)
+
+        # Search for posts related to the query
+        posts = list(subreddit.search(query, limit=20))  # Ensure posts is a list
+
+        # Check if there are no posts found
+        if not posts:
+            return JsonResponse({"message": "No posts found. Try using a different keyword."}, status=404)
+
+        # Prepare the response data
+        post_data = []
+        
+        for post in posts:
+            post_details = {
+                "title": post.title,
+                "url": post.url,
+                "comments": []
+            }
+
+            # Check if the query keyword is in the title
+            if query.lower() in post.title.lower():
+                # Add all comments if the title contains the query keyword
+                post.comments.replace_more(limit=0)  # To prevent loading more comments
+                comments = post.comments.list()[:10]  # Take only the first 10 comments
+
+                for comment in comments:
+                    post_details["comments"].append(comment.body)
+
+                post_data.append(post_details)
+
+            else:
+                # If the title doesn't contain the query keyword, only add comments that contain the query
+                post.comments.replace_more(limit=0)  # To prevent loading more comments
+                comments = post.comments.list()[:10]  # Take only the first 10 comments
+
+                for comment in comments:
+                    if query.lower() in comment.body.lower():  # Check if the keyword is in the comment
+                        post_details["comments"].append(comment.body)
+
+                # Only append the post if there are relevant comments
+                if post_details["comments"]:
+                    post_data.append(post_details)
+
+        # Return the data as JSON response
+        return JsonResponse({"posts": post_data}, status=200)
+
+    except Exception as e:
+        return JsonResponse({"error": f"Failed to fetch posts: {str(e)}"}, status=500)
