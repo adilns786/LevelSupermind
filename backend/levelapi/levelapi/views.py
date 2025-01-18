@@ -121,12 +121,12 @@ def scrape_ad_information(company_url):
 
     return ad_data
 
-
-# Function to scrape reviews and ratings from Play Store URL
+# Function to scrape reviews and rating
 def scrape_reviews_and_rating(url):
+    print(f"Fetching reviews from: {url}")
     try:
         # Send HTTP GET request to the URL
-        response = requests.get(url)
+        response = requests.get(url, timeout=10)
 
         # Check if the request was successful
         if response.status_code == 200:
@@ -135,37 +135,56 @@ def scrape_reviews_and_rating(url):
             # Parse the HTML content with BeautifulSoup
             soup = BeautifulSoup(response.content, 'html.parser')
 
-            # Find the overall rating (assuming it is inside a div with the class `Jwxk6d` or nearby)
-            rating_div = soup.find('div', class_='Jwxk6d')
-            overall_rating = None
-            if rating_div:
-                rating_tag = rating_div.find('span',
-                                             {'class': 'EGFGHd'})  # Update with actual class for rating if different
-                if rating_tag:
-                    overall_rating = rating_tag.get_text(strip=True)
+            # Find the overall container (outer_div)
+            outer_div = soup.find('div', class_='Jwxk6d')
+            if not outer_div:
+                print("Outer div not found. Ensure the class name is correct.")
+                return None
 
-            # Find individual reviews
             reviews = []
-            review_divs = soup.find_all('div', class_='h3YV2d')  # Update the class if necessary
-
-            for review_div in review_divs:
-                review_text = review_div.get_text(strip=True)
-                reviews.append(review_text)
+            try:
+                # Find all review divs within the outer_div
+                review_divs = outer_div.find_all('div', class_='h3YV2d')  # Update the class if necessary
+                if not review_divs:
+                    print("No reviews found inside the outer div.")
+                else:
+                    for review_div in review_divs:
+                        # Extract and clean review text
+                        review_text = review_div.get_text(strip=True)
+                        reviews.append(review_text)
+                        print(f"Review: {review_text}")
+            except Exception as e:
+                print(f"An error occurred while extracting reviews: {e}")
 
             # Return reviews and overall rating
             return {
                 'reviews': reviews,
-                'overall_rating': overall_rating
+                'overall_rating': 0,  # Placeholder for rating
             }
         else:
             print(f"Failed to fetch the content. Status code: {response.status_code}")
             return None
 
     except requests.exceptions.RequestException as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred while making the HTTP request: {e}")
         return None
 
 
+# API view to scrape reviews
+@api_view(['GET'])
+def get_reviews(request):
+    company_url = request.GET.get('company_url')  # Ensure the correct parameter name
+
+    if not company_url:
+        return JsonResponse({"error": "Company URL is required"}, status=400)
+
+    # Call the scraping function
+    result = scrape_reviews_and_rating(company_url)
+
+    if result is None:
+        return JsonResponse({"error": "Failed to scrape the reviews"}, status=500)
+
+    return JsonResponse(result, status=200)
 # API view to scrape company details, Play Store link, ad-related info, and reviews
 @api_view(['GET'])
 def get_company_and_play_store_details(request):
