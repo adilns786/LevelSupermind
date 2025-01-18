@@ -19,7 +19,7 @@ const Home = () => {
 
                 {/* Options Section */}
                 <div className="flex flex-col space-y-6 w-full max-w-md">
-                    <Link to="/option1">
+                    <Link to="/artfinder">
                         <div className="bg-gray-800 bg-opacity-80 shadow-lg rounded-lg p-6 text-center transform transition-transform duration-300 hover:scale-105">
                             <h2 className="text-lg font-semibold">Option 1</h2>
                             <p className="text-gray-300">Description for Option 1.</p>
