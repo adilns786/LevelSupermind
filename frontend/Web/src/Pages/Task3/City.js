@@ -1,0 +1,76 @@
+// indiaStatesAndCities.js
+
+const indiaStatesAndCities = {
+    "Andhra Pradesh": [
+      "Amaravati",
+      "Visakhapatnam",
+      "Vijayawada",
+      "Guntur",
+      "Kakinada",
+    ],
+    "Arunachal Pradesh": [
+      "Itanagar",
+      "Tawang",
+      "Naharlagun",
+      "Pasighat",
+    ],
+    "Assam": ["Guwahati", "Dibrugarh", "Jorhat", "Silchar", "Nagaon"],
+    "Bihar": ["Patna", "Gaya", "Bhagalpur", "Muzzafarpur", "Begusarai"],
+    "Chhattisgarh": ["Raipur", "Bilaspur", "Durg", "Korba", "Rajnandgaon"],
+    "Goa": ["Panaji", "Vasco da Gama", "Margao", "Mapusa", "Ponda"],
+    "Gujarat": [
+      "Ahmedabad",
+      "Surat",
+      "Vadodara",
+      "Rajkot",
+      "Bhavnagar",
+    ],
+    "Haryana": ["Chandigarh", "Gurugram", "Faridabad", "Hisar", "Ambala"],
+    "Himachal Pradesh": ["Shimla", "Manali", "Kullu", "Kangra", "Dharamshala"],
+    "Jharkhand": ["Ranchi", "Jamshedpur", "Dhanbad", "Bokaro", "Deoghar"],
+    "Karnataka": [
+      "Bengaluru",
+      "Mysuru",
+      "Hubli",
+      "Mangalore",
+      "Belgaum",
+    ],
+    "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode", "Thrissur", "Kollam"],
+    "Madhya Pradesh": [
+      "Bhopal",
+      "Indore",
+      "Gwalior",
+      "Ujjain",
+      "Jabalpur",
+    ],
+    "Maharashtra": [
+      "Mumbai",
+      "Pune",
+      "Nagpur",
+      "Nashik",
+      "Aurangabad",
+    ],
+    "Manipur": ["Imphal", "Thoubal", "Bishnupur", "Churachandpur"],
+    "Meghalaya": ["Shillong", "Tura", "Nongstoin", "Jowai", "Baghmara"],
+    "Mizoram": ["Aizawl", "Lunglei", "Champhai", "Kolasib", "Serchhip"],
+    "Nagaland": ["Kohima", "Dimapur", "Mokokchung", "Wokha", "Mon"],
+    "Odisha": ["Bhubaneswar", "Cuttack", "Rourkela", "Berhampur", "Balasore"],
+    "Punjab": ["Chandigarh", "Amritsar", "Ludhiana", "Jalandhar", "Patiala"],
+    "Rajasthan": ["Jaipur", "Udaipur", "Kota", "Jodhpur", "Ajmer"],
+    "Sikkim": ["Gangtok", "Namchi", "Jorethang", "Mangan", "Rangpo"],
+    "Tamil Nadu": ["Chennai", "Coimbatore", "Madurai", "Trichy", "Salem"],
+    "Telangana": ["Hyderabad", "Warangal", "Khammam", "Nizamabad", "Karimnagar"],
+    "Tripura": ["Agartala", "Udaipur", "Belonia", "Dharmanagar", "Ambassa"],
+    "Uttar Pradesh": [
+      "Lucknow",
+      "Kanpur",
+      "Agra",
+      "Varanasi",
+      "Meerut",
+    ],
+    "Uttarakhand": ["Dehradun", "Haridwar", "Nainital", "Rishikesh", "Roorkee"],
+    "West Bengal": ["Kolkata", "Darjeeling", "Siliguri", "Asansol", "Durgapur"],
+  };
+  
+  export default indiaStatesAndCities;
+  
