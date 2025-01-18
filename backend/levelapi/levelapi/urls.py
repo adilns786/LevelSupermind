@@ -16,9 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import hello_world
+from .views import get_company_and_play_store_details
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/hello/', hello_world, name='hello_world'),
+    path('scrape-data/', get_company_and_play_store_details, name='scrape_data'),
 ]
