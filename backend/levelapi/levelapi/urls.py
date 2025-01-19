@@ -16,11 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from .views import get_company_and_play_store_details,get_reviews, get_reddit_posts
+from .views import get_company_and_play_store_details,get_reviews, get_reddit_posts,get_quora_data
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('scrape-data/', get_company_and_play_store_details, name='scrape_data'),
-    path('scrape-review/', get_reviews, name='get_reviews'),
+    path('scrape-review/', get_reviews, name='get_reviews'),(),
     path('scrape-reddit/', get_reddit_posts, name='get_reddit'),
+    path('scrape-quora/', get_quora_data, name='get_quora_data'), 
 ]
+
+    

@@ -14,6 +14,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.http import JsonResponse
 import praw
+from playwright.sync_api import sync_playwright
+
+#company_name
+#company_url
+#subreddit=glasses,query=Lenskart,(competitorname,domain(keyword))
+#q=Lenskart(competitorName)
 
 # Initialize Reddit API client with credentials
 reddit = praw.Reddit(
@@ -193,6 +199,7 @@ def get_reviews(request):
         return JsonResponse({"error": "Failed to scrape the reviews"}, status=500)
 
     return JsonResponse(result, status=200)
+
 # API view to scrape company details, Play Store link, ad-related info, and reviews
 @api_view(['GET'])
 def get_company_and_play_store_details(request):
@@ -291,3 +298,44 @@ def get_reddit_posts(request):
 
     except Exception as e:
         return JsonResponse({"error": f"Failed to fetch posts: {str(e)}"}, status=500)
+    
+@api_view(['GET'])
+def get_quora_data(request):
+    query = request.GET.get('q', 'Sneakers')  # Default to 'Sneakers' if no query is provided
+    
+    try:
+        with sync_playwright() as p:
+            # Launch the browser in headless mode
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+
+            # Set the headers for the request
+            headers = {
+                "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+                "Accept-Encoding": "gzip, deflate, br, zstd",
+                "Accept-Language": "en-IN,en;q=0.9,mr-IN;q=0.8,mr;q=0.7,en-US;q=0.6,hi;q=0.5",
+                "Cookie": "m-b=Z8UeoBlOVnypuFHui4101A==; m-b_lax=Z8UeoBlOVnypuFHui4101A==; m-b_strict=Z8UeoBlOVnypuFHui4101A==; m-s=wUEg3jZSZOsOMCpghuZRmw==; m-dynamicFontSize=regular; m-themeStrategy=auto; m-theme=dark; m-sa=1; m-login=1; m-lat=LNJZ/bOta03D9b1NlhVeYWPd7XCDYeTb9ZDy2dbbBQ==; m-uid=2918260132; __gads=ID=c22f694257972d3a:T=1737225983:RT=1737242187:S=ALNI_MaKHKPw0xstb6socsd1YWfTxmjzZw; __eoi=ID=7893099232cf7ebb:T=1737225983:RT=1737242187:S=AA-AfjajtrglRlKnHsFiNX8cm0W5; m-qm-4118881110-0=eyJrZXkiOiJhbG9nIiwiYXJncyI6WyJMb29rdXBCYXJWaWV3TW9yZUNsaWNrdGhyb3VnaCIseyJ0eXBlIjozOSwiaGFzaCI6IjA0MmUxNDY3NmI5NDViNDkyYjZmODg5NTZmYTk3NDFmfHNlYXJjaHwwfDA0NzI1MDgyNjk2MzUzODMzfDAifSxudWxsLG51bGxdfQ%3D%3D",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36"
+            }
+
+            # Set extra headers for the page
+            page.set_extra_http_headers(headers)
+
+            # Go to the Quora search page
+            page.goto(f"https://www.quora.com/search?q={query}")
+
+            # Wait for the page to load and for the main content to be available
+            page.wait_for_selector('div#mainContent')
+
+            # Extract the text content from the div with id "mainContent"
+            main_content = page.locator('div#mainContent')
+            text_content = main_content.inner_text()
+
+            # Close the browser
+            browser.close()
+
+            # Return the extracted content as JSON response
+            return JsonResponse({"query": query, "content": text_content})
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status_code=500)
